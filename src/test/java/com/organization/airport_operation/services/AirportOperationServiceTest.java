@@ -42,12 +42,12 @@ public class AirportOperationServiceTest {
     resourceFileService.init();
 
     AirportOperationService instance = new AirportOperationService(resourceFileService);
-    instance.loadData();
+    instance.init();
   }
 
   @Test
   public void loadData() throws Exception {
-    this.instance.loadData();
+    this.instance.init();
   }
 
 }

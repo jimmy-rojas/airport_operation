@@ -1,17 +1,22 @@
 package com.organization.airport_operation.services;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import com.organization.airport_operation.model.AirportData;
 import com.organization.airport_operation.utils.FileUtils;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-@Scope(value = "singleton")
 @Service
-public class ResourceFileService {
+@Profile("default")
+public class ResourceFileService implements IAirportDataSource {
 
   @Value("classpath:data.json")
   private Resource fileResource;
@@ -23,7 +28,11 @@ public class ResourceFileService {
     resourceFile = FileUtils.getFileFromResource(fileResource);
   }
 
-  public File getResourceFile() {
-    return resourceFile;
+  @Override
+  public AirportData loadAirportData() throws FileNotFoundException {
+    Gson gson = new Gson();
+    JsonReader reader = new JsonReader(new FileReader(this.resourceFile));
+    AirportData airportData = gson.fromJson(reader, AirportData.class);
+    return airportData;
   }
 }

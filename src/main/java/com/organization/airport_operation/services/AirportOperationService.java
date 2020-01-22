@@ -1,29 +1,26 @@
 package com.organization.airport_operation.services;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.organization.airport_operation.model.Airport;
 import com.organization.airport_operation.model.AirportData;
-import java.io.FileReader;
 import java.io.IOException;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AirportOperationService {
 
-  private ResourceFileService resourceFileService;
+  private IAirportDataSource dataSource;
   private Airport airport;
 
   @Autowired
-  public AirportOperationService(ResourceFileService resourceFileService) {
-    this.resourceFileService = resourceFileService;
+  public AirportOperationService(IAirportDataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
-  public synchronized void loadData() throws IOException {
-    Gson gson = new Gson();
-    JsonReader reader = new JsonReader(new FileReader(this.resourceFileService.getResourceFile()));
-    AirportData airportData = gson.fromJson(reader, AirportData.class);
+  @PostConstruct
+  public void init() throws Exception {
+    AirportData airportData = this.dataSource.loadAirportData();
     if (airportData != null) {
       airport = airportData.getAirport();
     } else {
