@@ -8,6 +8,7 @@ import com.organization.airport_operation.utils.LoggerHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,11 +23,16 @@ public class ResourceFileService implements IAirportDataSource {
   @Value("classpath:data.json")
   private Resource fileResource;
 
+  @Value("classpath:dataOutput.json")
+  private Resource fileOutputResource;
+
   private File resourceFile;
+  private File resourceFileOutput;
 
   @PostConstruct
   public void init() throws IOException {
     resourceFile = FileUtils.getFileFromResource(fileResource);
+    resourceFileOutput = FileUtils.getFileOutputResource(fileOutputResource);
   }
 
   @Override
@@ -41,5 +47,21 @@ public class ResourceFileService implements IAirportDataSource {
     LoggerHelper.info("loadAirportData Ended: " + totalProcessingTimeThreads);
 
     return airportData;
+  }
+
+  @Override
+  public void saveAirportData(AirportData airportData) throws Exception {
+
+    long startProcessingTime = System.currentTimeMillis();
+
+    Gson gson = new Gson();
+    try (FileWriter writer = new FileWriter(resourceFileOutput)) {
+      gson.toJson(airportData, writer);
+    } catch (IOException e) {
+      throw new IOException("It was unable to save into file");
+    }
+
+    long totalProcessingTimeThreads = System.currentTimeMillis() - startProcessingTime;
+    LoggerHelper.info("saveAirportData Ended: " + totalProcessingTimeThreads);
   }
 }

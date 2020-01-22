@@ -13,7 +13,7 @@ public class FileUtils {
     if (!file.exists() || !file.isReadable()) {
       throw new IOException("Unable to find resource");
     }
-    File newFile = new File("file.json");
+    File newFile = new File(file.getFilename());
     if (newFile.exists() && newFile.canWrite()) {
       newFile.delete();
     }
@@ -33,6 +33,17 @@ public class FileUtils {
       }
 
       fos.write(text.getBytes());
+    }
+    return newFile;
+  }
+
+  public static File getFileOutputResource(Resource file) throws IOException {
+    File newFile = new File(file.getFilename());
+    if (newFile.exists() && newFile.canWrite()) {
+      newFile.delete();
+    }
+    if (!newFile.createNewFile() || !newFile.canWrite()) {
+      throw new IOException("It was unable to provide a new file");
     }
     return newFile;
   }

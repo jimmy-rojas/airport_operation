@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class AirportOperationService {
 
   private IAirportDataSource dataSource;
+  private AirportData airportData;
   private Airport airport;
 
   @Autowired
@@ -20,7 +21,7 @@ public class AirportOperationService {
 
   @PostConstruct
   public void init() throws Exception {
-    AirportData airportData = this.dataSource.loadAirportData();
+    airportData = this.dataSource.loadAirportData();
     if (airportData != null) {
       airport = airportData.getAirport();
     } else {
@@ -28,4 +29,7 @@ public class AirportOperationService {
     }
   }
 
+  public synchronized void saveData() throws Exception {
+    this.dataSource.saveAirportData(airportData);
+  }
 }

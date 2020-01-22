@@ -5,4 +5,6 @@ import com.organization.airport_operation.model.AirportData;
 public interface IAirportDataSource {
 
   AirportData loadAirportData() throws Exception;
+
+  void saveAirportData(AirportData airportData) throws Exception;
 }

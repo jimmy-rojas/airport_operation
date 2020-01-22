@@ -27,6 +27,10 @@ public class AirportOperationServiceTest {
     org.springframework.test.util.ReflectionTestUtils
         .setField(this.resourceFileService, "fileResource", r);
 
+    r = new ClassPathResource("dataOutput.json");
+    org.springframework.test.util.ReflectionTestUtils
+        .setField(this.resourceFileService, "fileOutputResource", r);
+
     this.resourceFileService.init();
 
     this.instance = new AirportOperationService(this.resourceFileService);
@@ -38,6 +42,8 @@ public class AirportOperationServiceTest {
 
     org.springframework.test.util.ReflectionTestUtils.setField(
         resourceFileService, "fileResource", new ClassPathResource("invalid_data.json"));
+    org.springframework.test.util.ReflectionTestUtils.setField(
+        resourceFileService, "fileOutputResource", new ClassPathResource("dataOutput.json"));
 
     resourceFileService.init();
 
@@ -48,6 +54,12 @@ public class AirportOperationServiceTest {
   @Test
   public void loadData() throws Exception {
     this.instance.init();
+  }
+
+  @Test
+  public void saveData() throws Exception {
+    this.instance.init();
+    this.instance.saveData();
   }
 
 }
