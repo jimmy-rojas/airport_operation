@@ -2,7 +2,7 @@ package com.organization.airport_operation.model;
 
 public class Operations {
 
-  private String type;
+  private OperationsType type;
   private int id;
   private int plane_id;
   private int terminal_id;
@@ -11,11 +11,11 @@ public class Operations {
   private String spent_time;
   private String planned_time;
 
-  public String getType() {
+  public OperationsType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(OperationsType type) {
     this.type = type;
   }
 
