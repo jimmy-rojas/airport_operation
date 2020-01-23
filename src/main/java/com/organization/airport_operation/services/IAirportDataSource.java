@@ -6,5 +6,5 @@ public interface IAirportDataSource {
 
   AirportData loadAirportData() throws Exception;
 
-  void saveAirportData(AirportData airportData) throws Exception;
+  void saveAirportData(Object airportData) throws Exception;
 }

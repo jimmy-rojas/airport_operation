@@ -23,6 +23,7 @@ public class AirportOperationService {
 
   private IAirportDataSource dataSource;
 
+  private Airport airport;
   private Map<Integer, Airlines> airlinesMap = new HashMap<>();
   private Map<Integer, Terminals> terminalsHashMap = new HashMap<>();
   private Map<Integer, Map<Integer, Planes>> airlinePlanesMap = new HashMap<>();
@@ -37,7 +38,7 @@ public class AirportOperationService {
   public void init() throws Exception {
     AirportData airportData = this.dataSource.loadAirportData();
     if (airportData != null) {
-      Airport airport = airportData.getAirport();
+      airport = airportData.getAirport();
       processAirportData(airport);
     } else {
       throw new IOException("Unable to load main Airport Data.");
@@ -67,6 +68,8 @@ public class AirportOperationService {
   public synchronized void saveData() throws Exception {
     AirportData airportData = new AirportData();
     Airport airport = new Airport();
+    airport.setId(this.airport.getId());
+    airport.setName(this.airport.getName());
     List<Airlines> airlines = new ArrayList<>();
     for (Airlines airline : airlinesMap.values()) {
       airlines.add(airline);
@@ -108,5 +111,9 @@ public class AirportOperationService {
       throw new NotFoundException("No Operations were found for that OperationsType: " + type);
     }
     return operationsMap.get(type);
+  }
+
+  public void saveOperationsByType() throws Exception {
+    this.dataSource.saveAirportData(operationsMap);
   }
 }

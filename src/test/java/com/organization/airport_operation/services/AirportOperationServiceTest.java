@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import com.organization.airport_operation.exceptions.NotFoundException;
 import com.organization.airport_operation.model.Airlines;
+import com.organization.airport_operation.model.AirportData;
 import com.organization.airport_operation.model.Operations;
 import com.organization.airport_operation.model.OperationsType;
 import com.organization.airport_operation.model.Planes;
@@ -14,8 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AirportOperationServiceTest {
@@ -28,15 +27,6 @@ public class AirportOperationServiceTest {
     MockitoAnnotations.initMocks(this);
 
     this.resourceFileService = new ResourceFileService();
-
-    Resource r = new ClassPathResource("data.json");
-    org.springframework.test.util.ReflectionTestUtils
-        .setField(this.resourceFileService, "fileResource", r);
-
-    r = new ClassPathResource("dataOutput.json");
-    org.springframework.test.util.ReflectionTestUtils
-        .setField(this.resourceFileService, "fileOutputResource", r);
-
     this.resourceFileService.init();
 
     this.instance = new AirportOperationService(this.resourceFileService);
@@ -44,16 +34,18 @@ public class AirportOperationServiceTest {
 
   @Test (expected = IOException.class)
   public void loadData_invalid_data() throws Exception {
-    ResourceFileService resourceFileService = new ResourceFileService();
+    IAirportDataSource resourceFileServiceMock = new IAirportDataSource() {
+      @Override
+      public AirportData loadAirportData() throws Exception {
+        throw  new IOException("test exception");
+      }
 
-    org.springframework.test.util.ReflectionTestUtils.setField(
-        resourceFileService, "fileResource", new ClassPathResource("invalid_data.json"));
-    org.springframework.test.util.ReflectionTestUtils.setField(
-        resourceFileService, "fileOutputResource", new ClassPathResource("dataOutput.json"));
+      @Override
+      public void saveAirportData(Object airportData) throws Exception {
 
-    resourceFileService.init();
-
-    AirportOperationService instance = new AirportOperationService(resourceFileService);
+      }
+    };
+    AirportOperationService instance = new AirportOperationService(resourceFileServiceMock);
     instance.init();
   }
 
@@ -96,15 +88,10 @@ public class AirportOperationServiceTest {
     assertEquals(1, operations.size());
   }
 
-  /*@Test
-  public void addAirline_() throws Exception {
+  @Test
+  public void saveOperationsByType() throws Exception {
     this.instance.init();
-//    Airlines airline = new Airlines();
-//    airline.setId(2);
-//    airline.setName("LATAM Airlines");
-    Airlines airline = this.instance.getAirlinesById(1);
-    airline.setName("NEW NANE");
-    this.instance.saveData();
-  }*/
+    this.instance.saveOperationsByType();
+  }
 
 }

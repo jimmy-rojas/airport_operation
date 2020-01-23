@@ -11,28 +11,20 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 @Service
 @Profile("default")
 public class ResourceFileService implements IAirportDataSource {
 
-  @Value("classpath:data.json")
-  private Resource fileResource;
-
-  @Value("classpath:dataOutput.json")
-  private Resource fileOutputResource;
-
   private File resourceFile;
   private File resourceFileOutput;
 
   @PostConstruct
   public void init() throws IOException {
-    resourceFile = FileUtils.getFileFromResource(fileResource);
-    resourceFileOutput = FileUtils.getFileOutputResource(fileOutputResource);
+    resourceFile = FileUtils.getFileInOut("data-input.json", false);
+    resourceFileOutput = FileUtils.getFileInOut("data-output.json", true);
   }
 
   @Override
@@ -50,7 +42,7 @@ public class ResourceFileService implements IAirportDataSource {
   }
 
   @Override
-  public void saveAirportData(AirportData airportData) throws Exception {
+  public void saveAirportData(Object airportData) throws Exception {
 
     long startProcessingTime = System.currentTimeMillis();
 
